@@ -43,8 +43,8 @@ const Weather = () => {
         "50n": cloudNightIcon,
     }
 
-    const search = async(city) => {
-        if(city === "") {
+    const search = async (city) => {
+        if (city === "") {
             alert("Please enter a city name")
             return;
         };
@@ -53,7 +53,7 @@ const Weather = () => {
 
             const res = await fetch(url);
             const data = await res.json();
-            if(!res.ok){
+            if (!res.ok) {
                 alert("City not found");
                 return;
             }
@@ -65,6 +65,7 @@ const Weather = () => {
                 temp: Math.floor(data.main.temp),
                 location: data.name,
                 icon: icon,
+                isNight: data.weather[0].icon.includes('n')
             });
 
             // Update recent searches
@@ -104,57 +105,57 @@ const Weather = () => {
         search("Delhi");
     }, [])
 
-  return (
-    <div className='weather'>
-        <div className="searchBar">
-            <input 
-                ref={inputRef} 
-                type="text" 
-                placeholder='Search' 
-                onClick={() => setShowHistory(!showHistory)}
-            />
-            <img src={searchIcon} alt="" onClick={() => search(inputRef.current.value)}/>
-        </div>
-        
-        {showHistory && recentSearches.length > 0 && (
-            <div className="history-dropdown">
-                {recentSearches.map((city, index) => (
-                    <div key={index} className="history-item" onClick={() => {
-                        inputRef.current.value = city;
-                        search(city);
-                    }}>
-                        <span>{city}</span>
-                        <button className="delete-btn" onClick={(e) => handleDeleteSearch(e, city)}>x</button>
-                    </div>
-                ))}
-                <button className="clear-btn" onClick={handleClearHistory}>Clear All</button>
+    return (
+        <div className={`weather ${weatherData.isNight ? 'night' : ''}`}>
+            <div className="searchBar">
+                <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder='Search'
+                    onClick={() => setShowHistory(!showHistory)}
+                />
+                <img src={searchIcon} alt="" onClick={() => search(inputRef.current.value)} />
             </div>
-        )}
 
-        {weatherData?<>
-        <img src={weatherData.icon} alt="" className='weatherIcon' />
-        <p className='temp'>{weatherData.temp}°C</p>
-        <p className='location'>{weatherData.location}</p>
-        <div className="weatherData">
-            <div className="col">
-                <img src={humidityIcon} alt="" />
-                <div>
-                    <p>{weatherData.humidity}%</p>
-                    <span>Humidity</span>
+            {showHistory && recentSearches.length > 0 && (
+                <div className="history-dropdown">
+                    {recentSearches.map((city, index) => (
+                        <div key={index} className="history-item" onClick={() => {
+                            inputRef.current.value = city;
+                            search(city);
+                        }}>
+                            <span>{city}</span>
+                            <button className="delete-btn" onClick={(e) => handleDeleteSearch(e, city)}>x</button>
+                        </div>
+                    ))}
+                    <button className="clear-btn" onClick={handleClearHistory}>Clear All</button>
                 </div>
-            </div>
-            <div className="col">
-                <img src={windIcon} alt="" />
-                <div>
-                    <p>{weatherData.windSpeed} KM/hr</p>
-                    <span>Wind Speed</span>
+            )}
+
+            {weatherData ? <>
+                <img src={weatherData.icon} alt="" className='weatherIcon' />
+                <p className='temp'>{weatherData.temp}°C</p>
+                <p className='location'>{weatherData.location}</p>
+                <div className="weatherData">
+                    <div className="col">
+                        <img src={humidityIcon} alt="" />
+                        <div>
+                            <p>{weatherData.humidity}%</p>
+                            <span>Humidity</span>
+                        </div>
+                    </div>
+                    <div className="col">
+                        <img src={windIcon} alt="" />
+                        <div>
+                            <p>{weatherData.windSpeed} KM/hr</p>
+                            <span>Wind Speed</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </> : <></>}
+
         </div>
-        </>:<></>}
-        
-    </div>
-  )
+    )
 }
 
 export default Weather
