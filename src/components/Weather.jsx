@@ -101,7 +101,7 @@ const Weather = () => {
         if (savedSearches) {
             setRecentSearches(JSON.parse(savedSearches));
         }
-        search("New York");
+        search("Delhi");
     }, [])
 
   return (
